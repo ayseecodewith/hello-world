@@ -1,0 +1,11 @@
+services:
+  backend:
+    build: .
+    container_name: hello-world-backend-container
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - hello-world-data:/data
+
+volumes:
+  hello-world-data:
