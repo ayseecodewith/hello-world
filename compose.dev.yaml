@@ -1,15 +1,4 @@
 services:
-  backend:
-    build: ./backend
-    container_name: hello-world-backend-container
-    volumes:
-      - hello-world-data:/data
-
   frontend:
-    build: ./frontend
-    container_name: hello-world-frontend-container
     ports:
       - "127.0.0.1:3000:80"
-
-volumes:
-  hello-world-data:
