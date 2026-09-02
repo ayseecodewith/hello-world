@@ -1,22 +1,8 @@
 # Hello World Backend
 
-Python ve FastAPI kullanılarak geliştirilmiş, frontend ile backend arasındaki temel HTTP iletişimini gösteren basit bir web projesidir.
+Python, FastAPI ve Docker kullanılarak geliştirilmiş basit bir frontend-backend iletişim projesidir.
 
-## Proje Açıklaması
-
-Frontend tarafında HTML, CSS ve JavaScript kullanılır. Kullanıcı butona tıkladığında JavaScript, FastAPI backend'e `GET` isteği gönderir. Backend `"Hello World"` mesajını JSON formatında döndürür ve frontend bu mesajı ekranda gösterir.
-
-```text
-Browser
-   ↓
-HTML + JavaScript
-   ↓ HTTP GET
-FastAPI Backend
-   ↓ JSON Response
-"Hello World"
-   ↓
-Browser
-```
+Frontend, FastAPI backend'e HTTP `GET` isteği gönderir. Backend ise `"Hello World"` mesajını JSON formatında döndürür.
 
 ## Kullanılan Teknolojiler
 
@@ -26,89 +12,60 @@ Browser
 - HTML
 - CSS
 - JavaScript
+- Docker
+- Docker Compose
+- Nginx
 
 ## Proje Yapısı
 
 ```text
 hello-world-backend/
 │
-├── app.py
-├── requirements.txt
+├── backend/
+│   ├── app.py
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+├── frontend/
+│   ├── index.html
+│   ├── script.js
+│   ├── style.css
+│   ├── nginx.conf
+│   └── Dockerfile
+│
+├── compose.dev.yaml
 ├── README.md
-├── .gitignore
-│
-├── templates/
-│   └── index.html
-│
-└── static/
-    ├── script.js
-    └── style.css
+└── .gitignore
 ```
 
-## Kurulum
+## Docker ile Çalıştırma
 
-Projeyi klonlayın veya proje klasörüne girin:
+Docker Desktop'ın açık olduğundan emin olun.
+
+Proje klasöründe:
 
 ```bash
-cd hello-world-backend
+docker compose -f compose.dev.yaml up -d --build
 ```
 
-### Virtual Environment
-
-**macOS / Linux:**
+Container'ların çalıştığını kontrol etmek için:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+docker compose -f compose.dev.yaml ps
 ```
 
-**Windows:**
-
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-```
-
-### Bağımlılıkların Kurulması
-
-Virtual environment aktifken:
-
-```bash
-python -m pip install -r requirements.txt
-```
-
-## Projeyi Çalıştırma
-
-Backend'i başlatmak için:
-
-```bash
-uvicorn app:app --reload
-```
-
-Backend varsayılan olarak şu adreste çalışır:
+Uygulamayı tarayıcıda açmak için:
 
 ```text
-http://127.0.0.1:8000
+http://localhost:3000
 ```
 
-Tarayıcıdan aç:
+## API
 
-```text
-http://127.0.0.1:8000
-```
-
-## API Endpoint
-
-Backend'in API endpoint'i:
+Backend endpoint:
 
 ```text
 GET /api/hello
-```
-
-Tam adres:
-
-```text
-http://127.0.0.1:8000/api/hello
 ```
 
 Response:
@@ -119,52 +76,24 @@ Response:
 }
 ```
 
-## Frontend → Backend İletişimi
+## Docker Container Yapısı
 
-Frontend'deki JavaScript:
-
-```javascript
-const response = await fetch("/api/hello");
-```
-
-ile backend'e HTTP `GET` isteği gönderir.
-
-FastAPI:
-
-```python
-@app.get("/api/hello")
-async def hello():
-    return {"message": "Hello World"}
-```
-
-ile isteği karşılar ve `"Hello World"` mesajını JSON response olarak gönderir.
-
-JavaScript response'u alır:
-
-```javascript
-const data = await response.json();
-```
-
-ve mesajı sayfada gösterir:
-
-```javascript
-result.textContent = data.message;
-```
+Frontend ve backend ayrı container'larda çalışır:
 
 ```text
 Browser
    ↓
-Frontend
+localhost:3000
    ↓
-fetch("/api/hello")
+Frontend Container
    ↓
-HTTP GET Request
+backend:8000
    ↓
-FastAPI Backend
-   ↓
-HTTP Response
-   ↓
-Frontend
-   ↓
-"Hello World"
+Backend Container
+```
+
+Container'ları durdurmak için:
+
+```bash
+docker compose -f compose.dev.yaml down
 ```
